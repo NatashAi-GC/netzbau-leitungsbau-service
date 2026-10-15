@@ -1,0 +1,9 @@
+ID;projekt_ID;abschnittNr;vonStation;bisStation;verlegeart;laengeMeter;verlegtMeter;status;bemerkung
+b2e4d3f1-0002-4d2b-8b00-000000000101;a1f3c2e0-0001-4c1a-9a00-000000000001;A-01;UW Gersthofen;Muffe M1 Augsburger Str.;OFFENE_BAUWEISE;620;620;FERTIG;
+b2e4d3f1-0002-4d2b-8b00-000000000102;a1f3c2e0-0001-4c1a-9a00-000000000001;A-02;Muffe M1 Augsburger Str.;Muffe M2 Bahnquerung;SPUELBOHRUNG;180;180;FERTIG;Bahnquerung per Spülbohrung abgeschlossen
+b2e4d3f1-0002-4d2b-8b00-000000000103;a1f3c2e0-0001-4c1a-9a00-000000000001;A-03;Muffe M2 Bahnquerung;Station Industriepark;OFFENE_BAUWEISE;480;310;IN_BAU;
+b2e4d3f1-0002-4d2b-8b00-000000000201;a1f3c2e0-0001-4c1a-9a00-000000000002;G-01;PoP Haunstetten;NVt 12 Inninger Str.;PFLUGVERFAHREN;1450;1450;FERTIG;
+b2e4d3f1-0002-4d2b-8b00-000000000202;a1f3c2e0-0001-4c1a-9a00-000000000002;G-02;NVt 12 Inninger Str.;NVt 17 Königsbrunner Str.;OFFENE_BAUWEISE;1300;390;IN_BAU;Engstelle Höhe Hausnr. 44 – Abstimmung mit Wasserversorger
+b2e4d3f1-0002-4d2b-8b00-000000000203;a1f3c2e0-0001-4c1a-9a00-000000000002;G-03;NVt 17 Königsbrunner Str.;NVt 21 Sportanlage;EINZUG_LEERROHR;1450;0;GEPLANT;
+b2e4d3f1-0002-4d2b-8b00-000000000301;a1f3c2e0-0001-4c1a-9a00-000000000003;GA-01;Regelanlage Bahnhofstr.;Kreuzung Hunnenstr.;OFFENE_BAUWEISE;520;0;GEPLANT;
+b2e4d3f1-0002-4d2b-8b00-000000000302;a1f3c2e0-0001-4c1a-9a00-000000000003;GA-02;Kreuzung Hunnenstr.;Bahnhofstr. 88;OFFENE_BAUWEISE;340;0;GEPLANT;

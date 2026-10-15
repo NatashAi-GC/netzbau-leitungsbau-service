@@ -1,0 +1,23 @@
+@base = http://localhost:4004/odata/v4/leitungsbau
+
+### Alle Bauprojekte mit Abschnitten
+GET {{base}}/Bauprojekte?$expand=abschnitte
+
+### Einzelner Abschnitt (MS-Kabeltrasse, A-03)
+GET {{base}}/Leitungsabschnitte(b2e4d3f1-0002-4d2b-8b00-000000000103)
+
+### Tagesmeldung: verlegte Meter für A-03 nachtragen
+PATCH {{base}}/Leitungsabschnitte(b2e4d3f1-0002-4d2b-8b00-000000000103)
+Content-Type: application/json
+
+{
+  "verlegtMeter": 400
+}
+
+### Bemerkung zu Abschnitt G-02 ändern
+PATCH {{base}}/Leitungsabschnitte(b2e4d3f1-0002-4d2b-8b00-000000000202)
+Content-Type: application/json
+
+{
+  "bemerkung": "Engstelle geklärt, Weiterbau ab KW 44"
+}

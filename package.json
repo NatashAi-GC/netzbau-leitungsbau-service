@@ -1,0 +1,33 @@
+{
+  "name": "netzbau-leitungsbau-service",
+  "version": "1.0.0",
+  "description": "CAP-Service (Node.js) für Leitungsbauprojekte: Projekte, Leitungsabschnitte, Verlegefortschritt",
+  "private": true,
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@sap/cds": "^9",
+    "express": "^4"
+  },
+  "devDependencies": {
+    "@cap-js/cds-test": "^0",
+    "@cap-js/sqlite": "^2"
+  },
+  "scripts": {
+    "start": "cds-serve",
+    "watch": "cds watch",
+    "test": "node --test test/"
+  },
+  "cds": {
+    "requires": {
+      "db": {
+        "kind": "sqlite",
+        "credentials": {
+          "url": ":memory:"
+        }
+      }
+    }
+  }
+}
