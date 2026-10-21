@@ -12,8 +12,21 @@ module.exports = class LeitungsbauService extends cds.ApplicationService {
      * Der Status wird nie vom Client übernommen, sondern immer aus
      * verlegter Länge und Abschnittslänge abgeleitet.
      */
-    this.before(['CREATE', 'UPDATE'], Leitungsabschnitte, req => {
-      const { laengeMeter, verlegtMeter = 0 } = req.data
+    this.before(['CREATE', 'UPDATE'], Leitungsabschnitte, async req => {
+      let { laengeMeter, verlegtMeter } = req.data
+
+      if (req.event === 'UPDATE') {
+        if (laengeMeter === undefined && verlegtMeter === undefined) {
+          return
+        }
+        const current = await SELECT.one.from(Leitungsabschnitte, req.data.ID)
+        if (current) {
+          if (laengeMeter === undefined) laengeMeter = current.laengeMeter
+          if (verlegtMeter === undefined) verlegtMeter = current.verlegtMeter
+        }
+      } else {
+        if (verlegtMeter === undefined) verlegtMeter = 0
+      }
 
       if (laengeMeter !== undefined && laengeMeter <= 0) {
         return req.error(400, 'Die Abschnittslänge muss größer 0 m sein.', 'laengeMeter')

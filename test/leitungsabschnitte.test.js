@@ -2,7 +2,7 @@ const { describe, it } = require('node:test')
 const assert = require('node:assert/strict')
 const cds = require('@sap/cds')
 
-const { GET, POST, PUT } = cds.test(__dirname + '/..')
+const { GET, POST, PUT, PATCH } = cds.test(__dirname + '/..')
 
 const PROJEKT_GAS = 'a1f3c2e0-0001-4c1a-9a00-000000000003'
 const ABSCHNITT_GA01 = 'b2e4d3f1-0002-4d2b-8b00-000000000301'
@@ -50,5 +50,39 @@ describe('LeitungsbauService – Leitungsabschnitte', () => {
       verlegtMeter: 520
     })
     assert.equal(data.status, 'FERTIG')
+  })
+
+  it('ändert den Status des Abschnitts nicht, wenn nur eine Bemerkung hinzugefügt wird (PATCH)', async () => {
+    const abschnittId = 'b2e4d3f1-0002-4d2b-8b00-000000000103' // G-03 is IN_BAU initially
+    const { data } = await PATCH(`${BASE}/Leitungsabschnitte(${abschnittId})`, {
+      bemerkung: 'Neue Bemerkung vom Bauleiter'
+    })
+    assert.equal(data.status, 'IN_BAU')
+    assert.equal(data.bemerkung, 'Neue Bemerkung vom Bauleiter')
+  })
+
+  it('schließt das Projekt ab, wenn der letzte offene Abschnitt vollständig verlegt wird (PATCH)', async () => {
+    const abschnittId = 'b2e4d3f1-0002-4d2b-8b00-000000000103'
+    const projektId = 'a1f3c2e0-0001-4c1a-9a00-000000000001'
+
+    // Update the last section to be fully laid out
+    const { data } = await PATCH(`${BASE}/Leitungsabschnitte(${abschnittId})`, {
+      verlegtMeter: 480
+    })
+    assert.equal(data.status, 'FERTIG')
+
+    // Fetch the project status to check if it is closed
+    const { data: projData } = await GET(`${BASE}/Bauprojekte(${projektId})`)
+    assert.equal(projData.status, 'ABGESCHLOSSEN')
+  })
+
+  it('lehnt eine verlegte Länge ab, die größer als die ursprüngliche Abschnittslänge ist (PATCH)', async () => {
+    const abschnittId = 'b2e4d3f1-0002-4d2b-8b00-000000000103'
+    await assert.rejects(
+      PATCH(`${BASE}/Leitungsabschnitte(${abschnittId})`, {
+        verlegtMeter: 999
+      }),
+      err => err.response?.status === 400
+    )
   })
 })
