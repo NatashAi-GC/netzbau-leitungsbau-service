@@ -2,7 +2,7 @@ const { describe, it } = require('node:test')
 const assert = require('node:assert/strict')
 const cds = require('@sap/cds')
 
-const { GET, POST, PUT } = cds.test(__dirname + '/..')
+const { GET, POST, PUT, PATCH } = cds.test(__dirname + '/..')
 
 const PROJEKT_GAS = 'a1f3c2e0-0001-4c1a-9a00-000000000003'
 const ABSCHNITT_GA01 = 'b2e4d3f1-0002-4d2b-8b00-000000000301'
@@ -50,5 +50,52 @@ describe('LeitungsbauService – Leitungsabschnitte', () => {
       verlegtMeter: 520
     })
     assert.equal(data.status, 'FERTIG')
+  })
+
+  it('Bug 1: Eine Bemerkungsänderung darf den Status des Abschnitts nicht ändern', async () => {
+    // Set section GA-01 to FERTIG first
+    await PATCH(`${BASE}/Leitungsabschnitte(${ABSCHNITT_GA01})`, {
+      verlegtMeter: 520
+    })
+
+    // Now update only the comment
+    const { data } = await PATCH(`${BASE}/Leitungsabschnitte(${ABSCHNITT_GA01})`, {
+      bemerkung: 'Bauleiter-Bemerkung'
+    })
+    assert.equal(data.status, 'FERTIG')
+  })
+
+  it('Bug 2: Letzter offener Abschnitt wird auf FERTIG gesetzt und Projekt wird abgeschlossen', async () => {
+    // Fetch all sections of the project
+    const { data: sectionsData } = await GET(`${BASE}/Bauprojekte(${PROJEKT_GAS})/abschnitte`)
+    const sections = sectionsData.value
+
+    // Complete all sections except the last one
+    for (let i = 0; i < sections.length - 1; i++) {
+      const section = sections[i]
+      await PATCH(`${BASE}/Leitungsabschnitte(${section.ID})`, {
+        verlegtMeter: section.laengeMeter
+      })
+    }
+
+    // Complete the last section via PATCH
+    const lastSection = sections[sections.length - 1]
+    const { data: sectionData } = await PATCH(`${BASE}/Leitungsabschnitte(${lastSection.ID})`, {
+      verlegtMeter: lastSection.laengeMeter
+    })
+    assert.equal(sectionData.status, 'FERTIG')
+
+    // Verify project is now ABGESCHLOSSEN
+    const { data: projectData } = await GET(`${BASE}/Bauprojekte(${PROJEKT_GAS})`)
+    assert.equal(projectData.status, 'ABGESCHLOSSEN')
+  })
+
+  it('Bug 3: Kann nicht mehr Meter zurückmelden als geplant (PATCH)', async () => {
+    await assert.rejects(
+      PATCH(`${BASE}/Leitungsabschnitte(${ABSCHNITT_GA01})`, {
+        verlegtMeter: 1000
+      }),
+      err => err.response?.status === 400
+    )
   })
 })
